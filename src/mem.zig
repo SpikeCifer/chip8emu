@@ -62,9 +62,10 @@ pub const Memory = struct {
 };
 
 test "Load Program in Memory" {
-    // TODO: How can we know the size of the buffer in runtime?
-    var buffer: [4]u8 = undefined;
+    var buffer: [1024]u8 = undefined;
     const program = try std.fs.cwd().readFile("test_opcode.ch8", &buffer);
+    try expect(program.len != buffer.len);
+
     const mem = Memory.init(program);
 
     try expect(mem.heap[0] == 0);
