@@ -20,7 +20,7 @@ pub const CPU = struct {
     pub fn run(instruction: u16) !void {
         const decoded_instruction = decode(instruction);
         switch (decoded_instruction[0]) {
-            0x0 => std.debug.print("", .{}),
+            0x0 => std.debug.print("Clear Screen!", .{}),
             0x1 => std.debug.print("Jump!\n", .{}),
             0x6 => std.debug.print("Set Register V{x}!\n", .{decoded_instruction[1]}),
             0x7 => std.debug.print("Add Value to Register V{x}!\n", .{decoded_instruction[1]}),

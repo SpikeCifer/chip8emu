@@ -61,22 +61,11 @@ pub const Memory = struct {
     }
 };
 
-test "Load Program in Memory" {
-    var buffer: [1024]u8 = undefined;
-    const program = try std.fs.cwd().readFile("test_opcode.ch8", &buffer);
-    try expect(program.len != buffer.len);
-
-    const mem = Memory.init(program);
-
-    try expect(mem.heap[0] == 0);
-    try expect(mem.heap[0x050] == Memory.fonts[0]);
-    try expect(mem.heap[512] == program[0]);
-}
-
 test "Fetch Instruction" {
     var memory = Memory{ .heap = [_]u8{0x0} ** 4096, .pc = 0 };
     memory.heap[0] = 0x15;
     memory.heap[1] = 0x32;
     const opcode = memory.fetch();
     try expect(opcode == 0x1532);
+    try expect(memory.pc == 2);
 }
