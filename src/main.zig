@@ -1,4 +1,5 @@
 const std = @import("std");
+
 const Memory = @import("mem.zig").Memory;
 const CPU = @import("cpu.zig").CPU;
 
@@ -20,7 +21,9 @@ pub fn main() !void {
     while (memory.fetch()) |instruction| {
         CPU.run(instruction) catch {
             std.debug.print("Instruction {x} is not supported!\n", .{instruction});
-            return;
+            continue;
         };
     }
+
+    std.debug.print("Reached end of program!", .{});
 }

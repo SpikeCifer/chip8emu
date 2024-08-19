@@ -39,11 +39,11 @@ pub const Memory = struct {
     pub fn init(program: []const u8) Memory {
         var buffer = [_]u8{0x0} ** (4 * 1024); // Create a 4KB Memory Area
         @memcpy(buffer[0x050 .. 0x09f + 1], &fonts); // + 1 for including the last address
-        @memcpy(buffer[512 .. 512 + program.len], program);
+        @memcpy(buffer[512 .. 512 + program.len], program); // load the program in memory
 
         return Memory{
             .heap = buffer,
-            .pc = 512,
+            .pc = 512, // Starting address of the program
         };
     }
 
