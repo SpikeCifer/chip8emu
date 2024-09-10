@@ -10,6 +10,8 @@ Also learn Zig?
 I am trying to load a program described in a file to memory.
 
 ## TODO
-[ ] Learn about the zig build system so that I can:
+[X] Learn about the zig build system so that I can:
 1. call "zig build run <filename>" to run a specific file from the command line
 2. call "zig build test" to run all tests
+
+[ ] Open up a window so that I can print the result of the read instructions
