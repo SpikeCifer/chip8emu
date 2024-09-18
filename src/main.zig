@@ -1,4 +1,5 @@
 const std = @import("std");
+const display = @import("display.zig");
 
 const Memory = @import("mem.zig").Memory;
 const CPU = @import("cpu.zig").CPU;
@@ -8,6 +9,7 @@ const InputParseError = error{
 };
 
 pub fn main() !void {
+
     // Process command line arguments
     var args = std.process.args();
     const first_arg = args.next().?; // Skip the first argument as it's the name of the binary
