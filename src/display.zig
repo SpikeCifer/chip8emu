@@ -1,10 +1,6 @@
 const std = @import("std");
 const cx11 = @cImport(@cInclude("X11/Xlib.h"));
 
-pub const display = struct {
-    pixels: [64 * 32]bool = undefined,
-};
-
 const POSY = 500;
 const POSX = 500;
 const WIDTH = 500;

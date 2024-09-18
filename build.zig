@@ -10,11 +10,13 @@ pub fn build(b: *std.Build) void {
         .target = b.host,
     });
 
+    exe.linkLibC();
+    exe.linkSystemLibrary("X11");
     b.installArtifact(exe);
 
     // Zig build run command
     const run_exe = b.addRunArtifact(exe);
-    if (b.args) |args| {
+    if (b.args) |args| { // Add the passed filename as argument
         run_exe.addArgs(args);
     }
     const run_step = b.step("run", "Run the Application");

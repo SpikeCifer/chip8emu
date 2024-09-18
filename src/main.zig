@@ -9,11 +9,9 @@ const InputParseError = error{
 };
 
 pub fn main() !void {
-
     // Process command line arguments
     var args = std.process.args();
-    const first_arg = args.next().?; // Skip the first argument as it's the name of the binary
-    std.debug.print("The first argument was: {s}\n", .{first_arg});
+    _ = args.next().?; // Skip the first argument as it's the name of the binary
     const filename = args.next() orelse return InputParseError.NoFilenameFound;
 
     // Load program in Memory
