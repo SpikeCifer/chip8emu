@@ -11,7 +11,6 @@ const expect = std.testing.expect;
 
 pub const Memory = struct {
     heap: [4 * 1024]u8 = undefined,
-    pc: u16 = 0,
 
     const fonts = [80]u8{
         0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
@@ -43,29 +42,24 @@ pub const Memory = struct {
 
         return Memory{
             .heap = buffer,
-            .pc = 512, // Starting address of the program
         };
     }
 
-    /// Returns the instruction that PC is currently pointing at from memory
-    pub fn fetch(self: *Memory) ?u16 {
-        if (self.pc >= self.heap.len) {
+    /// Returns the instruction that PC is currently pointing at from Memory
+    /// as a 16bit instruction
+    pub fn fetch(self: *Memory, pc: u16) ?u16 {
+        if (pc >= self.heap.len) {
             return null;
         }
 
-        const result: u16 = @as(u16, self.heap[self.pc]) << 8 |
-            self.heap[self.pc + 1];
-        self.pc += 2;
-
-        return result;
+        return @as(u16, self.heap[pc]) << 8 | self.heap[pc + 1];
     }
 };
 
 test "Fetch Instruction" {
-    var memory = Memory{ .heap = [_]u8{0x0} ** 4096, .pc = 0 };
+    var memory = Memory{ .heap = [_]u8{0x0} ** 4096 };
     memory.heap[0] = 0x15;
     memory.heap[1] = 0x32;
-    const opcode = memory.fetch();
+    const opcode = memory.fetch(0);
     try expect(opcode == 0x1532);
-    try expect(memory.pc == 2);
 }

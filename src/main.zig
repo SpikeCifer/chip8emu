@@ -18,8 +18,9 @@ pub fn main() !void {
     var buffer: [4 * 1024 - 512]u8 = undefined;
     const program = try std.fs.cwd().readFile(filename, &buffer);
     var memory = Memory.init(program);
+    var cpu = CPU{};
 
-    while (memory.fetch()) |instruction| {
+    while (memory.fetch(cpu.pc)) |instruction| : (cpu.pc += 2) {
         CPU.run(instruction) catch {
             std.debug.print("Instruction {x} is not supported!\n", .{instruction});
             continue;

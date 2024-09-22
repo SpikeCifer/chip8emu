@@ -1,4 +1,5 @@
 const std = @import("std");
+const assert = std.testing;
 
 const CPUErrors = error{
     UnsupportedInstruction,
@@ -7,16 +8,17 @@ const CPUErrors = error{
 pub const CPU = struct {
     var_regs: [16]u8 = undefined,
     index_reg: u16 = undefined,
+    pc: u16 = 0,
 
-    pub fn run(instruction: u16) !void {
+    pub fn run(self: *CPU, instruction: u16) !void {
         switch ((instruction & 0xF000) >> 12) {
             0x0 => return, // Nothing to do currently
             0x1 => std.debug.print("Jump to {x}!\n", .{(instruction & 0x0FFF) >> 4}),
-            0x2 => std.debug.print("Call Subrutine at {x}!\n", .{(instruction & 0x0FFF) >> 4}),
+            0x2 => std.debug.print("Call Subroutine at {x}!\n", .{(instruction & 0x0FFF) >> 4}),
             0x3 => std.debug.print("Skip Instruction if V{x} is {x}!\n", .{ (instruction & 0x0F00) >> 8, (instruction & 0x00FF) }),
             0x4 => std.debug.print("Skip Instruction if V{x} is not {x}!\n", .{ (instruction & 0x0F00) >> 8, (instruction & 0x00FF) }),
             0x5 => std.debug.print("Skip Instruction if V{x} is equal to V{x}!\n", .{ (instruction & 0x0F00) >> 8, (instruction & 0x00F) >> 4 }),
-            0x6 => std.debug.print("Set Register V{x} to value {x}!\n", .{ (instruction & 0x0F00) >> 8, instruction & 0x00FF }),
+            0x6 => self.var_regs[(instruction & 0x0F00) >> 8] = @truncate(instruction & 0x00FF),
             0x7 => std.debug.print("Add Value {x} to Register V{x}!\n", .{ instruction & 0x00FF, (instruction & 0x0F00) >> 8 }),
             0x8 => {
                 switch (instruction & 0x000F) {
@@ -59,3 +61,10 @@ pub const CPU = struct {
         }
     }
 };
+
+test "Run a set instruction" {
+    var cpu = CPU{};
+    const instruction = 0x6A11;
+    try cpu.run(instruction);
+    try assert.expectEqual(0x11, cpu.var_regs[0xA]);
+}
