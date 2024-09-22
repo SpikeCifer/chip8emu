@@ -8,12 +8,18 @@ const CPUErrors = error{
 pub const CPU = struct {
     var_regs: [16]u8 = undefined,
     index_reg: u16 = undefined,
-    pc: u16 = 0,
+    pc: u16 = 512, // Programs start at address 512
 
     pub fn run(self: *CPU, instruction: u16) !void {
         switch ((instruction & 0xF000) >> 12) {
-            0x0 => return, // Nothing to do currently
-            0x1 => std.debug.print("Jump to {x}!\n", .{(instruction & 0x0FFF) >> 4}),
+            0x0 => {
+                switch (instruction & 0x00FF) {
+                    0xE0 => std.debug.print("Clear Screen!\n", .{}),
+                    0xEE => std.debug.print("Return from subroutine !\n", .{}),
+                    else => return CPUErrors.UnsupportedInstruction,
+                }
+            },
+            0x1 => self.pc = (instruction & 0x0FFF) - 2,
             0x2 => std.debug.print("Call Subroutine at {x}!\n", .{(instruction & 0x0FFF) >> 4}),
             0x3 => std.debug.print("Skip Instruction if V{x} is {x}!\n", .{ (instruction & 0x0F00) >> 8, (instruction & 0x00FF) }),
             0x4 => std.debug.print("Skip Instruction if V{x} is not {x}!\n", .{ (instruction & 0x0F00) >> 8, (instruction & 0x00FF) }),
@@ -32,7 +38,7 @@ pub const CPU = struct {
                 }
             },
             0x9 => std.debug.print("Skip one instruction if V{x} != V{x}!\n", .{ (instruction & 0x0F) >> 8, (instruction & 0x00F) >> 4 }),
-            0xA => std.debug.print("Set Register I to {x}!\n", .{instruction & 0x0FFF}),
+            0xA => self.index_reg = @truncate(instruction & 0x0FFF),
             0xB => std.debug.print("Jump with offset {x}!\n", .{instruction & 0x0FFF}),
             0xC => std.debug.print("Random!\n", .{}),
             0xD => std.debug.print("Draw Screen!\n", .{}),
@@ -62,9 +68,24 @@ pub const CPU = struct {
     }
 };
 
+test "Run a jump instruction" {
+    var cpu = CPU{};
+    const instruction = 0x122a;
+
+    try cpu.run(instruction);
+    try assert.expectEqual(0x22a, cpu.pc + 2);
+}
 test "Run a set instruction" {
     var cpu = CPU{};
     const instruction = 0x6A11;
     try cpu.run(instruction);
     try assert.expectEqual(0x11, cpu.var_regs[0xA]);
+}
+
+test "Run a set index instruction" {
+    var cpu = CPU{};
+    const instruction = 0xA22A;
+    try cpu.run(instruction);
+
+    try assert.expectEqual(0x22A, cpu.index_reg);
 }

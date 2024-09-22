@@ -1,0 +1,22 @@
+0NNN: Execute Machine Language Routine (Skip)
+00E0: Clear Screen (Set all pixels to 0)
+1NNN: Set PC to NNN
+00EE: Return from a subroutine
+2NNN: Call the subroutine at address NNN
+3XNN: Skip one instruction (pc + 2) if Vx = NN
+4XNN: Skip one instruction (pc + 2) if Vx != NN
+5XY0: Skip one instruction (pc + 2) if Vx = Vy
+6XNN: Vx = NN
+7XNN: Vx += NN
+8XYN: Logical & Arithmetic Operations
+ANNN: I = NNN
+BNNN: PC = NNN + V0
+CXNN: Random
+DXYN: Draw Screen
+EX9E, EXA1: Key binds
+FX07, FX15, FX17: Timers
+FX1E: I += Vx
+FX0A: Wait until key is pressed
+FX33: Binary -> Decimal
+FX55, FX65: Store and Load Memory
+9XY0: Skip one instruction (pc + 2) if Vx != Vy

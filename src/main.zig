@@ -1,8 +1,8 @@
 const std = @import("std");
-const display = @import("display.zig");
 
-const Memory = @import("mem.zig").Memory;
 const CPU = @import("cpu.zig").CPU;
+const Memory = @import("mem.zig").Memory;
+const display = @import("display.zig");
 
 const InputParseError = error{
     NoFilenameFound,
@@ -21,9 +21,11 @@ pub fn main() !void {
     var cpu = CPU{};
 
     while (memory.fetch(cpu.pc)) |instruction| : (cpu.pc += 2) {
-        CPU.run(instruction) catch {
+        std.debug.print("0x{x}: 0x{x}\n", .{ cpu.pc, instruction });
+
+        cpu.run(instruction) catch {
             std.debug.print("Instruction {x} is not supported!\n", .{instruction});
-            continue;
+            return;
         };
     }
 
